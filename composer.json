@@ -1,5 +1,5 @@
 {
-  "name": "mithun12000/Yii2-UrlAsset",
+  "name": "mithun12000/yii2-urlasset",
   "description": "Url Asset for Yii2 just like AssetBundle except it will work for creating menu for site module dynamically.",
   "version":"1.0.0",
   "keywords": [
