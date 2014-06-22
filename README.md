@@ -12,7 +12,7 @@ Using ```composer```
 ```
 "require": {
 	...other dependency...	
-	"mithun12000/Yii2-UrlAsset":"*"
+	"mithun12000/yii2-urlasset":"*"
 },
 ```
 
