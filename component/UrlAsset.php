@@ -80,6 +80,11 @@ class UrlAsset extends AssetBundle
             $bundle = $am->getBundle($dep);            
             $bundle->setParams($view);
         }
+        //defined hard code pull down trash menu to bottom
+        $trash = $view->params['urls']['ztrash'];
+        unset($view->params['urls']['ztrash']);
+        $view->params['urls']['ztrash']=$trash;
+        unset($trash);
     }
     
     public function checkDependency() {
