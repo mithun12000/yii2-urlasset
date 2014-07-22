@@ -50,17 +50,6 @@ class UrlAsset extends AssetBundle
      */
     public function setViewParams($view)
     {
-        if($this->module){
-            if(is_array($this->module)){
-                if(in_array(\Yii::$app->controller->module->id,$this->module)){
-                    $this->url[0][0]['active']=true;
-                }
-            }else{
-                if(\Yii::$app->controller->module->id == $this->module){
-                    $this->url[0][0]['active']=true;
-                }
-            }
-        }
         
         foreach ($this->url as $url) {
             if(isset($view->params['urls']) && is_array($view->params['urls'])){
@@ -69,6 +58,10 @@ class UrlAsset extends AssetBundle
                 $view->params['urls'] = $url;
             }
             
+        }
+        
+        if($module = $this->getModule()){
+            $view->params['urls'][$module]['active']=true;
         }
     }
     
