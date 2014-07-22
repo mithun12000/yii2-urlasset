@@ -127,4 +127,19 @@ class UrlAsset extends AssetBundle
         }
         return false;
     }
+    
+    public function getModule() {
+        if(!is_array($this->module)){
+            return false;
+        }
+        
+        if(array_key_exists(\Yii::$app->controller->module->id.'/'.\Yii::$app->controller->id,$this->module)){
+            return $this->module[\Yii::$app->controller->module->id.'/'.\Yii::$app->controller->id];
+        }
+        
+        if(array_key_exists(\Yii::$app->controller->module->id,$this->module)){
+            return $this->module[\Yii::$app->controller->module->id];
+        }
+        return false;
+    }
 }
