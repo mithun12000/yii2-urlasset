@@ -63,7 +63,7 @@ class UrlAsset extends AssetBundle
         }
         
         foreach ($this->url as $url) {
-            if(is_array($view->params['urls'])){
+            if(isset($view->params['urls']) && is_array($view->params['urls'])){
                 $view->params['urls'] = array_merge($view->params['urls'],$url);
             }else{
                 $view->params['urls'] = $url;
