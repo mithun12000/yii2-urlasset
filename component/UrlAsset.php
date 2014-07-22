@@ -64,18 +64,11 @@ class UrlAsset extends AssetBundle
         
         foreach ($this->url as $url) {
             if(isset($view->params['urls']) && is_array($view->params['urls'])){
-                $view->params['urls'] = array_merge($view->params['urls'],$url);
+                $view->params['urls'] = array_merge_recursive($view->params['urls'],$url);
             }else{
                 $view->params['urls'] = $url;
             }
             
-        }
-        foreach ($this->actionmap as $actionmap) {
-            if(is_array($view->params['actionmap'])){
-                $view->params['actionmap'] = array_merge($view->params['actionmap'],$actionmap);
-            }else{
-                $view->params['actionmap'] = $actionmap;
-            }
         }
     }
     
