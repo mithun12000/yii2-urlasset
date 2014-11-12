@@ -34,6 +34,45 @@ class UrlAsset extends AssetBundle
     
     public $module = '';
     
+    public function init() {
+        if(is_array($this->module)){            
+            foreach($this->module as $module=>$urlmap){
+                if ($module == 'site') continue;
+                
+                //\yii::trace('permission to check:'.$strmap);
+                //if(\Yii::$app->user->can($strmap)){
+                    if(isset($this->url[0][$urlmap]['items']) && count($this->url[0][$urlmap]['items'])){
+                        $anymenu = false;
+                        foreach($this->url[0][$urlmap]['items'] as $id=>$item){
+                            //if(!isset($item['url'])) continue;
+                            if(isset($item['permission'])){
+                                if(!\Yii::$app->user->can($item['permission'])){
+                                    unset($this->url[0][$urlmap]['items'][$id]);
+                                }else{
+                                    $anymenu = true;
+                                }
+                                unset($this->url[0][$urlmap]['items'][$id]['permission']);
+                            }else{
+                                $url = trim($item['url'][0], '/');
+                                \yii::trace('permission to check:'.$url);
+                                if(!\Yii::$app->user->can($url)){
+                                    unset($this->url[0][$urlmap]['items'][$id]);
+                                }else{
+                                    $anymenu = true;
+                                }
+                            }
+                        }
+                        if(!$anymenu){
+                            unset($this->url[0][$urlmap]);
+                        }
+                    }
+                /*}else{
+                    unset($this->url[0][$urlmap]);
+                }//*/
+            }
+        }
+    }
+    
     /**
      * @param View $view
      * @return the registered asset bundle instance
@@ -42,6 +81,23 @@ class UrlAsset extends AssetBundle
     {        
         $this->checkDependency();
         return $view->registerAssetBundle(get_class($this));
+    }
+    
+    /**
+     * 
+     * @param array $menuItems
+     * @param array $menuArray
+     * @return array Menu Array
+     */
+    private function MenuMerge($menuItems,$menuArray) {
+        foreach($menuArray as $menuKey => $menu){
+            if(isset($menuItems[$menuKey])){
+                $menuItems[$menuKey]['items'] = array_merge_recursive($menuItems[$menuKey]['items'],$menu['items']);
+            }else{
+                $menuItems[$menuKey] = $menu;
+            }
+        }        
+        return $menuItems;
     }
 
     /**
@@ -53,7 +109,7 @@ class UrlAsset extends AssetBundle
         
         foreach ($this->url as $url) {
             if(isset($view->params['urls']) && is_array($view->params['urls'])){
-                $view->params['urls'] = array_merge_recursive($view->params['urls'],$url);
+                $view->params['urls'] = $this->MenuMerge($view->params['urls'],$url);
             }else{
                 $view->params['urls'] = $url;
             }
@@ -74,10 +130,14 @@ class UrlAsset extends AssetBundle
             $bundle->setParams($view);
         }
         //defined hard code pull down trash menu to bottom
-        $trash = $view->params['urls']['ztrash'];
-        unset($view->params['urls']['ztrash']);
-        $view->params['urls']['ztrash']=$trash;
-        unset($trash);
+        if(isset($view->params['urls']['ztrash'])){
+            $trash = $view->params['urls']['ztrash'];
+            unset($view->params['urls']['ztrash']);
+            //if(isset($trash['items']) && count($trash['items'])){
+                $view->params['urls']['ztrash']=$trash;
+                unset($trash);
+            //}
+        }
     }
     
     public function checkDependency() {
